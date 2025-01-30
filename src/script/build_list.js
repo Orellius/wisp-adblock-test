@@ -17,15 +17,15 @@ const header = (entries, date, comment) => {
 		comment +
 		' Description: Simple and small list with the most popular advertising, tracking, analytics and social advertising services\n' +
 		comment +
-		' Homepage: https://github.com/d3ward/toolz\n' +
+		' Homepage: https://github.com/Turtlecute33/toolz\n' +
 		comment +
 		' License: CC BY-NC-SA\n' +
 		comment +
-		' Source: https://github.com/d3ward/toolz/blob/master/src/d3host' +
+		' Source: https://github.com/Turtlecute33/toolz/blob/master/src/d3host' +
 		ext +
 		'\n\n' +
 		comment +
-		' This list cover all the tests on https://d3ward.github.io/toolz/adblock\n' +
+		' This list cover all the tests on https://adblock.turtlecute.org\n' +
 		comment +
 		' Type : Stable\n' +
 		comment +

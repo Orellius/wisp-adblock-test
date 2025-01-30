@@ -510,9 +510,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		location.reload(true)
 	})
 	const stxt =
-		'https://raw.githubusercontent.com/d3ward/toolz/master/src/d3host.txt'
+		'https://raw.githubusercontent.com/Turtlecute33/toolz/master/src/d3host.txt'
 	const sadblock =
-		'https://raw.githubusercontent.com/d3ward/toolz/master/src/d3host.adblock'
+		'https://raw.githubusercontent.com/Turtlecute33/toolz/master/src/d3host.adblock'
 	document.querySelector('#d3H_txt').addEventListener('click', function () {
 		copyToClip(stxt)
 	})
