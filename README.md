@@ -8,7 +8,7 @@
 Hi, I'm TurtleCute, and I love testing my adblocker!<br>
 Sadly, a month ago, my favorite adblock tester was archived. I cleaned and debloated the codebase, and here it is online again!
 
-## Ad Block Test  [Link](https://d3ward.github.io/toolz/adblock)
+## Ad Block Test  [[link]](https://adblock.turtlecute.org)
 This tool allows you to check if your adblock solution is blocking enough hosts. With a simple UI and easy UX you can check how much you have blocked. The tool tries to connect to the most common domains for different categories (ads, analytics, bug tracking, social trackers, mix and OEMs).
 
 If you don't block all the hosts but you want to , you can use
