@@ -5,8 +5,6 @@
 	title="b2ntp" width="160" height="160" />
 </p>
 
-Test
-
 A set of testing and verification tools, with simple and beautiful design 
 
 ## Ad Block Test  [Link](https://d3ward.github.io/toolz/adblock)
