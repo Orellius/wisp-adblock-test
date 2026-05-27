@@ -17,8 +17,10 @@ const DEFAULT_SETTINGS = {
 }
 const HOST_FETCH_TIMEOUT_MS = 8000
 const HOST_FETCH_CONCURRENCY = 50
-const FIREFOX_MAC_HOST_FETCH_CONCURRENCY = 6
+const FIREFOX_MAC_HOST_FETCH_TIMEOUT_MS = 2500
+const FIREFOX_MAC_HOST_FETCH_CONCURRENCY = 1
 const TASK_YIELD_INTERVAL = 10
+const FIREFOX_MAC_TASK_YIELD_INTERVAL = 1
 
 function isPlainObject(value) {
 	return value !== null && typeof value === 'object' && !Array.isArray(value)
@@ -72,7 +74,17 @@ function createIconText(iconMarkup, text) {
 	return span
 }
 
-async function runTasksWithConcurrency(tasks, limit = HOST_FETCH_CONCURRENCY) {
+function waitForNextPaint() {
+	return new Promise((resolve) => {
+		requestAnimationFrame(() => setTimeout(resolve, 0))
+	})
+}
+
+async function runTasksWithConcurrency(
+	tasks,
+	limit = HOST_FETCH_CONCURRENCY,
+	yieldInterval = TASK_YIELD_INTERVAL
+) {
 	if (tasks.length === 0) return
 	let index = 0
 	let completed = 0
@@ -83,8 +95,8 @@ async function runTasksWithConcurrency(tasks, limit = HOST_FETCH_CONCURRENCY) {
 				const taskIndex = index++
 				await tasks[taskIndex]()
 				completed += 1
-				if (completed % TASK_YIELD_INTERVAL === 0) {
-					await new Promise((resolve) => setTimeout(resolve, 0))
+				if (completed % yieldInterval === 0) {
+					await waitForNextPaint()
 				}
 			}
 		}
@@ -92,15 +104,35 @@ async function runTasksWithConcurrency(tasks, limit = HOST_FETCH_CONCURRENCY) {
 	await Promise.all(workers)
 }
 
-function getHostFetchConcurrency() {
+function isFirefoxBasedMac() {
 	const ua = navigator.userAgent || ''
 	const platform = navigator.platform || ''
-	const isFirefox = /\bFirefox\//.test(ua)
+	const isFirefoxFamily =
+		/\b(Firefox|FxiOS|Waterfox|LibreWolf|IceCat|PaleMoon)\//.test(ua)
+	const isGecko =
+		/\bGecko\/\d/.test(ua) &&
+		!/AppleWebKit|Chrome|Chromium|Edg|OPR|Safari/.test(ua)
 	const isMac = /Mac/.test(platform) || /Mac OS X/.test(ua)
 
-	return isFirefox && isMac
+	return (isFirefoxFamily || isGecko) && isMac
+}
+
+function getHostFetchConcurrency() {
+	return isFirefoxBasedMac()
 		? FIREFOX_MAC_HOST_FETCH_CONCURRENCY
 		: HOST_FETCH_CONCURRENCY
+}
+
+function getHostFetchTimeout() {
+	return isFirefoxBasedMac()
+		? FIREFOX_MAC_HOST_FETCH_TIMEOUT_MS
+		: HOST_FETCH_TIMEOUT_MS
+}
+
+function getTaskYieldInterval() {
+	return isFirefoxBasedMac()
+		? FIREFOX_MAC_TASK_YIELD_INTERVAL
+		: TASK_YIELD_INTERVAL
 }
 
 const cd = document.querySelector('#dlg_changelog')
@@ -263,7 +295,7 @@ async function check_url(url, div, parent, k1, k2) {
 		await fetchWithTimeout(
 			'https://' + url + '/fakepage.html',
 			config,
-			HOST_FETCH_TIMEOUT_MS
+			getHostFetchTimeout()
 		)
 		// With mode: 'no-cors', a successful response is opaque (status 0).
 		// Any response means the request was NOT blocked.
@@ -372,7 +404,11 @@ async function fetchTests() {
 		test_log.appendChild(total_tests)
 	})
 
-	await runTasksWithConcurrency(tasks, getHostFetchConcurrency())
+	await runTasksWithConcurrency(
+		tasks,
+		getHostFetchConcurrency(),
+		getTaskYieldInterval()
+	)
 }
 
 function ad_script_test() {
@@ -468,6 +504,7 @@ function showCategoryState(categorySelector, isVisible) {
 }
 
 async function startAdBlockTesting() {
+	document.body.classList.add('_overflowhidden')
 	resetTestState()
 	testWrapper.innerHTML = ''
 	test_log.innerHTML = ''
@@ -634,7 +671,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	})
 	render_tests()
 
+	let testRunning = false
 	async function runTest() {
+		if (testRunning) return
+		testRunning = true
 		try {
 			await startAdBlockTesting()
 			collapse_category(settings['collapseAll'], true)
@@ -677,6 +717,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			const adbTest = document.querySelector('#adb_test')
 			adbTest.classList.remove('measuring')
 			fadeIn(adbTest, 'flex')
+			testRunning = false
 		}
 	}
 
