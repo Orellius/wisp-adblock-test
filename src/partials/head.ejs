@@ -1,3 +1,7 @@
+<%
+	const pageUrl = typeof canonical !== 'undefined' && canonical ? canonical : `https://${url}`
+	const socialImage = typeof preview_thumbnail !== 'undefined' && preview_thumbnail ? preview_thumbnail : 'https://adblock.turtlecute.org/assets/preview_toolz.png'
+%>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -25,14 +29,14 @@
 	<!-- Google / Search Engine Tags -->
 	<meta itemprop="name" content="<%= title %>">
 	<meta itemprop="description" content="<%= description %>">
-	<meta itemprop="image" content="https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/assets/preview_toolz.png">
+	<meta itemprop="image" content="<%= socialImage %>">
 
 	<!-- Open Graph Tags -->
-	<meta property="og:url" content="https://<%= url %>">
+	<meta property="og:url" content="<%= pageUrl %>">
 	<meta property="og:type" content="website">
 	<meta property="og:title" content="<%= title %>">
 	<meta property="og:description" content="<%= description %>">
-	<meta property="og:image" content="<%= preview_thumbnail %>">
+	<meta property="og:image" content="<%= socialImage %>">
 	<meta property="og:image:width" content="1200">
 	<meta property="og:image:height" content="630">
 	<meta property="og:image:alt" content="<%= title %> - Preview">
@@ -41,10 +45,10 @@
 
 	<!-- Twitter Meta Tags -->
 	<meta name="twitter:card" content="summary_large_image">
-	<meta property="twitter:url" content="https://<%= url %>">
+	<meta property="twitter:url" content="<%= pageUrl %>">
 	<meta name="twitter:title" content="<%= title %>">
 	<meta name="twitter:description" content="<%= description %>">
-	<meta name="twitter:image" content="<%= preview_thumbnail %>">
+	<meta name="twitter:image" content="<%= socialImage %>">
 	<meta name="twitter:image:alt" content="<%= title %> - Preview">
 
 	<!-- Structured Data (JSON-LD) -->
@@ -54,7 +58,7 @@
 		"@type": "WebApplication",
 		"name": "<%= title %>",
 		"description": "<%= description %>",
-		"url": "https://<%= url %>",
+		"url": "<%= pageUrl %>",
 		"applicationCategory": "UtilityApplication",
 		"operatingSystem": "Any",
 		"offers": {
@@ -77,8 +81,8 @@
 			"name": "Turtlecute",
 			"url": "https://turtlecute.org"
 		},
-		"image": "<%= preview_thumbnail %>",
-		"screenshot": "<%= preview_thumbnail %>",
+		"image": "<%= socialImage %>",
+		"screenshot": "<%= socialImage %>",
 		"browserRequirements": "Requires JavaScript. Requires HTML5.",
 		"softwareVersion": "<%= require('./package.json').version %>"
 	}

@@ -8,7 +8,9 @@ export class LocalStorageManager {
 	}
 
 	isPlainObject(value) {
-		return value !== null && typeof value === 'object' && !Array.isArray(value)
+		return (
+			value !== null && typeof value === 'object' && !Array.isArray(value)
+		)
 	}
 
 	clearAll() {

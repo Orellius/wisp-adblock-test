@@ -1,1 +1,1 @@
-const s_test_pagead = true
+window.s_test_pagead = true

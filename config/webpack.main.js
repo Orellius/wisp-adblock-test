@@ -13,7 +13,7 @@ module.exports = {
 		}, {})
 	},
 	output: {
-		filename: 'js/[name].js', 
+		filename: 'js/[name].js',
 		path: config.build,
 		clean: false,
 		assetModuleFilename: '[path][name][ext]',
@@ -54,7 +54,7 @@ module.exports = {
 			]
 		}),
 		new MiniCssExtractPlugin({
-			filename: 'css/[name].css', 
+			filename: 'css/[name].css',
 			chunkFilename: '[name].css'
 		}),
 		...pages.map(
@@ -97,7 +97,12 @@ module.exports = {
 				use: [
 					MiniCssExtractPlugin.loader, // Extract CSS from commonjs
 					'css-loader', // Turn css into commonjs
-					'sass-loader' // Turn scss into css
+					{
+						loader: 'sass-loader',
+						options: {
+							api: 'modern'
+						}
+					}
 				]
 			}
 		]

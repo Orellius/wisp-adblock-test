@@ -41,7 +41,9 @@ function normalizeResults(raw) {
 				date: typeof entry.date === 'string' ? entry.date : '',
 				note: typeof entry.note === 'string' ? entry.note : '',
 				abt: {
-					total: Number.isFinite(entry.abt.total) ? entry.abt.total : 0,
+					total: Number.isFinite(entry.abt.total)
+						? entry.abt.total
+						: 0,
 					blocked: Number.isFinite(entry.abt.blocked)
 						? entry.abt.blocked
 						: 0,
@@ -223,7 +225,7 @@ function markUnknownHost(url, hostDiv, parent, k1, k2, reason = 'unknown') {
 	hostDiv.appendChild(urlSpan)
 	abt.blocked += 1
 	Object.assign(abt.hosts[k1][k2], { [url]: true })
-	tslog += '<br> ' + url + ' - blocked'
+	tslog += '<br> ' + url + ' - blocked (' + reason + ')'
 }
 
 //Function to check a host blocking status
@@ -240,7 +242,7 @@ async function check_url(url, div, parent, k1, k2) {
 	const urlSpan = document.createElement('span')
 	urlSpan.textContent = url
 	try {
-		const response = await fetchWithTimeout(
+		await fetchWithTimeout(
 			'https://' + url + '/fakepage.html',
 			config,
 			HOST_FETCH_TIMEOUT_MS
@@ -391,7 +393,9 @@ function cosmetic_test_static() {
 			abt.notblocked += abt.cosmetic_test.static ? 0 : 1
 			document
 				.querySelector('#ct_static')
-				.classList.add(abt.cosmetic_test.static ? '_bg-green' : '_bg-red')
+				.classList.add(
+					abt.cosmetic_test.static ? '_bg-green' : '_bg-red'
+				)
 			const log = document.createElement('div')
 			test_log.appendChild(log)
 			log.innerHTML =
@@ -518,7 +522,9 @@ function render_tests() {
 		const card = document.createElement('div')
 		card.className = 'card'
 		const cardInfo = document.createElement('div')
-		cardInfo.appendChild(createIconText(icons['cdot'], 'Total : ' + abt_r.total))
+		cardInfo.appendChild(
+			createIconText(icons['cdot'], 'Total : ' + abt_r.total)
+		)
 		cardInfo.appendChild(document.createElement('br'))
 		cardInfo.appendChild(
 			createIconText(icons['x'], ' ' + abt_r.notblocked + ' not blocked')
@@ -676,7 +682,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		.addEventListener('click', function () {
 			copyToClip(stxt)
 		})
-	document.querySelector('#hostListAdblock').addEventListener('click', function () {
-		copyToClip(sadblock)
-	})
+	document
+		.querySelector('#hostListAdblock')
+		.addEventListener('click', function () {
+			copyToClip(sadblock)
+		})
 })

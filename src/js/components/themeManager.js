@@ -10,7 +10,8 @@ export function themeManager() {
 			storedTheme = null
 		}
 		if (!storedTheme) {
-			storedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+			storedTheme = window.matchMedia('(prefers-color-scheme: dark)')
+				.matches
 				? 'dark'
 				: 'light'
 		}
@@ -32,11 +33,16 @@ export function themeManager() {
 				document.documentElement.setAttribute('data-theme', targetTheme)
 				// Update aria-checked on all toggle switches
 				for (var j = 0; j < toggles.length; j++) {
-					toggles[j].setAttribute('aria-checked', targetTheme === 'dark' ? 'true' : 'false')
+					toggles[j].setAttribute(
+						'aria-checked',
+						targetTheme === 'dark' ? 'true' : 'false'
+					)
 				}
 				try {
 					localStorage.setItem('theme', targetTheme)
-				} catch (e) { /* localStorage unavailable */ }
+				} catch (e) {
+					/* localStorage unavailable */
+				}
 			}
 		}
 	}

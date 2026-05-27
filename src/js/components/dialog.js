@@ -33,12 +33,12 @@
 			(this._bindKeypress = this._bindKeypress.bind(this)),
 			(this.$el = t),
 			(this.shown = !1),
-				(this._id =
-					this.$el.getAttribute('data-a11y-dialog') || this.$el.id),
-				(this._previouslyFocused = null),
-				(this._listeners = {}),
-				(this.$el.__a11yDialogInstance = this),
-				this.create()
+			(this._id =
+				this.$el.getAttribute('data-a11y-dialog') || this.$el.id),
+			(this._previouslyFocused = null),
+			(this._listeners = {}),
+			(this.$el.__a11yDialogInstance = this),
+			this.create()
 	}
 
 	function i(t, e) {
@@ -180,24 +180,24 @@
 					(e.preventDefault(), this.hide(e)),
 				this.shown &&
 					'Tab' === e.key &&
-						(function (e, n) {
-							var s = (function (e) {
-									return i(t.join(','), e).filter(function (t) {
-										return !!(
-											t.offsetWidth ||
-											t.offsetHeight ||
-											t.getClientRects().length
-										)
-									})
-								})(e),
-								o = s.indexOf(document.activeElement)
-							if (0 === s.length) {
-								e.focus(), n.preventDefault()
-								return
-							}
-							n.shiftKey && 0 === o
-								? (s[s.length - 1].focus(), n.preventDefault())
-								: n.shiftKey ||
+					(function (e, n) {
+						var s = (function (e) {
+								return i(t.join(','), e).filter(function (t) {
+									return !!(
+										t.offsetWidth ||
+										t.offsetHeight ||
+										t.getClientRects().length
+									)
+								})
+							})(e),
+							o = s.indexOf(document.activeElement)
+						if (0 === s.length) {
+							e.focus(), n.preventDefault()
+							return
+						}
+						n.shiftKey && 0 === o
+							? (s[s.length - 1].focus(), n.preventDefault())
+							: n.shiftKey ||
 							  o !== s.length - 1 ||
 							  (s[0].focus(), n.preventDefault())
 					})(this.$el, e))
