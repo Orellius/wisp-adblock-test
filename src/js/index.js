@@ -17,6 +17,8 @@ const DEFAULT_SETTINGS = {
 }
 const HOST_FETCH_TIMEOUT_MS = 8000
 const HOST_FETCH_CONCURRENCY = 50
+const FIREFOX_MAC_HOST_FETCH_CONCURRENCY = 6
+const TASK_YIELD_INTERVAL = 10
 
 function isPlainObject(value) {
 	return value !== null && typeof value === 'object' && !Array.isArray(value)
@@ -73,16 +75,32 @@ function createIconText(iconMarkup, text) {
 async function runTasksWithConcurrency(tasks, limit = HOST_FETCH_CONCURRENCY) {
 	if (tasks.length === 0) return
 	let index = 0
+	let completed = 0
 	const workers = Array.from(
 		{ length: Math.min(limit, tasks.length) },
 		async () => {
 			while (index < tasks.length) {
 				const taskIndex = index++
 				await tasks[taskIndex]()
+				completed += 1
+				if (completed % TASK_YIELD_INTERVAL === 0) {
+					await new Promise((resolve) => setTimeout(resolve, 0))
+				}
 			}
 		}
 	)
 	await Promise.all(workers)
+}
+
+function getHostFetchConcurrency() {
+	const ua = navigator.userAgent || ''
+	const platform = navigator.platform || ''
+	const isFirefox = /\bFirefox\//.test(ua)
+	const isMac = /Mac/.test(platform) || /Mac OS X/.test(ua)
+
+	return isFirefox && isMac
+		? FIREFOX_MAC_HOST_FETCH_CONCURRENCY
+		: HOST_FETCH_CONCURRENCY
 }
 
 const cd = document.querySelector('#dlg_changelog')
@@ -354,7 +372,7 @@ async function fetchTests() {
 		test_log.appendChild(total_tests)
 	})
 
-	await runTasksWithConcurrency(tasks)
+	await runTasksWithConcurrency(tasks, getHostFetchConcurrency())
 }
 
 function ad_script_test() {
