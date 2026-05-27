@@ -62,6 +62,8 @@ main
 		display: block
 		width: 100%
 		height: auto
+	.sponsor_mobile
+		display: none
 	.sponsor_tag
 		position: absolute
 		top: .6rem
@@ -82,6 +84,45 @@ main
 		border-color: var(--primary)
 		box-shadow: 0 8px 28px rgba(0,0,0,.28)
 		outline: none
+	@media (max-width: 40em)
+		min-height: 7.25rem
+		background: #242429
+		img
+			position: absolute
+			inset: 0
+			width: 100%
+			height: 100%
+			object-fit: cover
+			object-position: left center
+			opacity: .18
+		.sponsor_mobile
+			position: relative
+			z-index: 1
+			display: flex
+			min-height: 7.25rem
+			flex-direction: column
+			justify-content: center
+			gap: .35rem
+			padding: 1rem 5.75rem 1rem 1rem
+			color: #fff
+			line-height: 1.25
+		.sponsor_mobile_kicker
+			color: #ff334f
+			font-size: .78rem
+			font-weight: 800
+			text-transform: uppercase
+		.sponsor_mobile_title
+			font-size: 1.05rem
+			font-weight: 700
+		.sponsor_mobile_meta
+			color: rgba(255,255,255,.78)
+			font-size: .78rem
+		.sponsor_tag
+			top: .75rem
+			right: .75rem
+			z-index: 2
+			padding: 3px 8px
+			font-size: .58rem
 #dlg_compatibility
 	z-index: 52
 #adb_test
