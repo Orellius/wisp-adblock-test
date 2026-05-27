@@ -6,10 +6,13 @@
 *:focus:not(:focus-visible)
 	outline: 0
 *:focus-visible
-	outline: .1rem solid var(--focus)
-	outline-offset: .1rem
+	outline: 2px solid var(--focus)
+	outline-offset: 2px
+	border-radius: var(--radius)
 html
 	text-rendering: optimizeLegibility
+	-webkit-font-smoothing: antialiased
+	-moz-osx-font-smoothing: grayscale
 	font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif
 	font-size: 12pt
 	color: var(--txt)
@@ -21,6 +24,7 @@ body
 	gap: .5rem
 	align-items: center
 	justify-content: center
+	letter-spacing: -0.005em
 
 	@media (prefers-reduced-motion: no-preference)
 		scroll-behavior: smooth

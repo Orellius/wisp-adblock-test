@@ -2,20 +2,26 @@
 
 h1, h2, h3, h4, h5, h6
 	margin-top: 1.5rem
-h1 
+	line-height: 1.25
+	letter-spacing: -0.015em
+	font-weight: 700
+h1
 	font-size: 2.6em
-h2 
-	font-size: 2.0em 
-h3 
-	font-size: 1.7em 
-h4 
-	font-size: 1.5em 
-h5 
-	font-size: 1.2em 
-h6 
-	font-size: 1em 
+h2
+	font-size: 2.0em
+h3
+	font-size: 1.7em
+h4
+	font-size: 1.5em
+h5
+	font-size: 1.2em
+	font-weight: 600
+h6
+	font-size: 1em
+	font-weight: 600
 p
 	margin-bottom: 1.5rem
+	line-height: 1.6
 p strong, p b 
 	color: var(--txt) 
 h1 + h2,
@@ -59,7 +65,10 @@ ins
 del 
 	color: var(--red)
 /* ------------------- Links ------------------ */
-a 
-	color: var(--primary) 
-	text-decoration: none 
+a
+	color: var(--primary)
+	text-decoration: none
 	cursor: pointer
+	transition: color 145ms ease, opacity 145ms ease
+	&:hover
+		opacity: .82

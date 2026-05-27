@@ -46,6 +46,22 @@
 main
 	min-height: 100vh
 	--bg-details: var(--bg3)
+#start_test
+	--btn-f: var(--primary-h)
+	--btn-brd: var(--primary)
+	--btn-bg: var(--primary)
+	--btn-bg-h: var(--primary-l)
+	--btn-txt: var(--txt-on-p)
+	min-width: 12rem
+	height: 3rem
+	font-weight: 600
+	letter-spacing: .01em
+	box-shadow: 0 4px 14px -4px var(--primary)
+	&:hover
+		box-shadow: 0 6px 18px -4px var(--primary)
+		transform: translateY(-1px)
+	&:active
+		box-shadow: 0 2px 8px -4px var(--primary)
 .sponsor_banner
 	display: block
 	position: relative
@@ -61,21 +77,23 @@ main
 		height: auto
 	.sponsor_tag
 		position: absolute
-		top: .5rem
-		right: .5rem
+		top: .6rem
+		right: .6rem
 		font-size: .65rem
 		font-weight: 600
 		letter-spacing: .08em
 		text-transform: uppercase
-		padding: 2px 8px
+		padding: 3px 10px
 		border-radius: 999px
-		background: rgba(255,255,255,.08)
-		color: rgba(255,255,255,.72)
+		background: rgba(255,255,255,.1)
+		color: rgba(255,255,255,.78)
+		backdrop-filter: blur(6px)
+		-webkit-backdrop-filter: blur(6px)
 		line-height: 1.4
 	&:hover, &:focus-visible
 		transform: translateY(-1px)
 		border-color: var(--primary)
-		box-shadow: 0 6px 24px rgba(0,0,0,.25)
+		box-shadow: 0 8px 28px rgba(0,0,0,.28)
 		outline: none
 #dlg_compatibility
 	z-index: 52
@@ -107,6 +125,9 @@ footer>div
 	align-items: center
 	justify-content: center
 	color: var(--txt)
+	background: var(--bg)
+	border: 1px solid var(--brd)
+	transition: background-color 320ms ease, border-color 320ms ease, color 320ms ease
 #test_log
 	height: 200px
 	overflow-y: auto
@@ -120,9 +141,11 @@ footer>div
 	display: flex
 	flex-direction: column
 .test_wrapper>div,.test_card
-	padding: .5rem
+	padding: .75rem
 	border-radius: 12px
 	background: var(--bg2)
+	border: 1px solid var(--brd)
+	transition: border-color 180ms ease, box-shadow 180ms ease
 .rwd-table-t
 	display: flex
 	gap: .5rem
