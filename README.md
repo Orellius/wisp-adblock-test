@@ -1,18 +1,18 @@
 <div align="center">
 
-<img src="src/assets/toolz/icon.svg" alt="AdBlockTest" width="120" height="120" />
+<img src="src/assets/adblock/icon.svg" alt="Wisp privacy test" width="120" height="120" />
 
-# AdBlockTest
+# Wisp Privacy Test
 
-**A small, privacy-first ad blocker test.**
+**A small, sponsor-free ad blocker / tracker test.**
 See if your blocker, DNS filter, or VPN catches ads, trackers, and analytics.
 
 [![License](https://img.shields.io/badge/license-CC--BY--NC--SA%204.0-22c55e?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Forked from](https://img.shields.io/badge/forked%20from-d3ward%2Ftoolz-475569?style=flat-square)](https://github.com/d3ward/toolz)
+[![Forked from](https://img.shields.io/badge/forked%20from-Turtlecute33%2Fadblocktest-475569?style=flat-square)](https://github.com/Turtlecute33/adblocktest)
 
 <br />
 
-<a href="https://adblock.turtlecute.org">
+<a href="https://orellius.github.io/wisp-adblock-test/">
   <img src="src/assets/cta-run-test.svg" alt="Run the test" />
 </a>
 
@@ -22,36 +22,34 @@ See if your blocker, DNS filter, or VPN catches ads, trackers, and analytics.
 
 ---
 
-Hi, I'm TurtleCute, and I love testing my adblocker.
-I cleaned, modernized, and debloated [d3ward's original project](https://github.com/d3ward/toolz) to keep the test online.
+## What this is
 
-## What it tests
+The privacy test bundled with the **Wisp** browser, used to show how much of
+the ad/tracker surface the browser blocks out of the box. It probes a list of
+known ad, analytics, and tracker hostnames from the page and scores how many
+are blocked, plus cosmetic-filter and script-loading checks. No real ads or
+trackers are ever activated.
 
-- **Hosts**: ads, analytics, trackers, social, and OEM domains.
-- **Cosmetic filters**: whether ad-shaped DOM elements get hidden.
-- **Script blocking**: whether `ads.js` and `pagead.js` style scripts load.
+## Changes from upstream
 
-## Host lists
+This is a fork of [Turtlecute33/adblocktest](https://github.com/Turtlecute33/adblocktest)
+(itself a fork of [d3ward/toolz](https://github.com/d3ward/toolz)), modified by Wisp to:
 
-Two formats if your blocker isn't catching enough:
+- remove the IVPN sponsor banner (sponsor-free),
+- remove the third-party umami analytics script (no tracker on a privacy
+  test page),
+- rebrand to Wisp (mark, names, metadata, deploy host).
 
-- [`d3host.txt`](https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.txt) (hosts file)
-- [`d3host.adblock`](https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.adblock) (adblock syntax)
+## Credits & license
 
-The list ships with [Blokada](https://blokada.org/) and the [OISD List](https://oisd.nl/).
+Original work by **d3ward** and **Turtlecute** (with **Daniela Brozzoni**).
+Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/);
+this fork keeps that license and attribution. Non-commercial use only.
 
-## Local development
+## Build
 
-```sh
-npm install
-npm run dev      # webpack dev server
-npm run build    # production build to /dist
 ```
-
-## Contributing
-
-Bug, broken test, or new test idea? [Open an issue](https://github.com/Turtlecute33/adblocktest/issues/new/choose).
-
-## License
-
-[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), same as the upstream project.
+npm ci
+npm run build   # outputs to dist/
+npm run dev     # local dev server
+```
