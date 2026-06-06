@@ -1,0 +1,37 @@
+name: Host liveness sweep
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Probe bait hosts (prune confirmed-dead)
+        run: node src/script/check_hosts.mjs --prune
+
+      - name: Regenerate host lists
+        run: npm run build-list || true
+
+      - name: Open pruning PR if anything died
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/prune-dead-hosts
+          delete-branch: true
+          add-paths: src/
+          commit-message: 'chore: prune dead bait hosts (weekly liveness sweep)'
+          title: 'chore: prune dead bait hosts'
+          body-path: liveness-report.md

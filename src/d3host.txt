@@ -1,15 +1,15 @@
-# Title: Turtlecute Host List
+# Title: Wisp Host List
 # Expires: 1 days
 # Description: Simple and small list with the most popular advertising, tracking, analytics and social advertising services
-# Homepage: https://github.com/Turtlecute33/adblocktest
+# Homepage: https://github.com/Orellius/wisp-adblock-test
 # License: CC BY-NC-SA
-# Source: https://github.com/Turtlecute33/adblocktest/blob/master/src/d3host.txt
+# Source: https://github.com/Orellius/wisp-adblock-test/blob/master/src/d3host.txt
 
-# This list cover all the tests on https://adblock.turtlecute.org
+# This list cover all the tests on https://orellius.github.io/wisp-adblock-test/
 # Type : Stable
-# Entries : 129
-# Updated On: 17/3/2026
-# Created by: Turtlecute
+# Entries : 127
+# Updated On: 6/6/2026
+# Created by: Turtlecute, maintained by Wisp
 
 #============ Ads =============
 
@@ -41,7 +41,6 @@
 # --- Media.net
 0.0.0.0 static.media.net
 0.0.0.0 media.net
-0.0.0.0 adservetx.media.net
 
 
 #========= Analytics ==========
@@ -59,7 +58,6 @@
 0.0.0.0 script.hotjar.com
 0.0.0.0 surveys.hotjar.com
 0.0.0.0 careers.hotjar.com
-0.0.0.0 events.hotjar.io
 
 # --- MouseFlow
 0.0.0.0 mouseflow.com
