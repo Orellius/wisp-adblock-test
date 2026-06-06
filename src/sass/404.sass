@@ -1,0 +1,132 @@
+@charset "utf-8"
+
+@use "./settings/variables" as *
+@use "./theme/light"
+@use "./theme/dark"
+@use "./base/basic"
+@use "./extra/aos"
+@use "./elements/typography"
+@use "./layout/navbar"
+@use "./layout/aside"
+@use "./layout/header"
+@use "./layout/container"
+@use "./layout/grid"
+@use "./layout/footer"
+@use "./elements/button"
+@use "./components/card"
+@use "./elements/form"
+@use "./components/dropdown"
+@use "./components/modal"
+@use "./components/gotop_link"
+@use "./elements/code"
+@use "./elements/figure"
+@use "./components/details"
+@use "./elements/table"
+@use "./components/tabs"
+@use "./extra/tooltip"
+@use "./extra/wave"
+@use "./extra/pages"
+@use "./extra/alert"
+@use "./utilities/alignment"
+@use "./utilities/background"
+@use "./utilities/border"
+@use "./utilities/display"
+@use "./utilities/margin"
+@use "./utilities/general"
+@use "./utilities/padding"
+@use "./utilities/spacer"
+@use "./utilities/text"
+
+$or-50: '#ffffff'
+$or-100: '#fdddde'
+$or-200: '#fababd'
+$or-300: '#f8989d'
+$or-400: '#f5757c'
+$or-500: '#f3535b'
+$or-600: '#d94148'
+$or-700: '#bf2f36'
+$or-800: '#a41c23'
+$or-900: '#8a0a10'
+html
+	--primary: #{$or-500}!important
+	--primary-h: #{$or-100}!important
+	--primary-l: #{$or-400}!important
+	--primary-d: #{$or-800}!important
+
+[data-theme="dark"]
+	--primary: #{$or-500} !important
+	--primary-h: #{$or-800}!important
+	--primary-l: #{$or-400}!important
+	--primary-d: #{$or-600}!important
+
+body
+	background-color: #{$or-300}
+	background-image: linear-gradient(315deg, #{$orange-400} 0%, #{$or-500} 74%)
+	background-size: 100% 100%
+	height: auto
+
+.squares
+	position: fixed
+	top: 0
+	left: 0
+	width: 100%
+	height: 100%
+	overflow: hidden
+	margin: 0
+	padding: 0
+	list-style: none
+	pointer-events: none
+	z-index: 0
+	li
+		position: absolute
+		display: block
+		width: 20px
+		height: 20px
+		background: rgba(255, 255, 255, 0.1)
+		bottom: -150px
+		border-radius: 4px
+		animation: squares-float 20s infinite
+		&:nth-child(1)
+			left: 25%
+			width: 80px
+			height: 80px
+			animation-delay: 0s
+			animation-duration: 18s
+		&:nth-child(2)
+			left: 10%
+			width: 20px
+			height: 20px
+			animation-delay: 2s
+			animation-duration: 25s
+		&:nth-child(3)
+			left: 70%
+			width: 30px
+			height: 30px
+			animation-delay: 4s
+			animation-duration: 22s
+		&:nth-child(4)
+			left: 40%
+			width: 60px
+			height: 60px
+			animation-delay: 0s
+			animation-duration: 15s
+		&:nth-child(5)
+			left: 65%
+			width: 20px
+			height: 20px
+			animation-delay: 3s
+			animation-duration: 20s
+		&:nth-child(6)
+			left: 85%
+			width: 50px
+			height: 50px
+			animation-delay: 7s
+			animation-duration: 17s
+
+@keyframes squares-float
+	0%
+		transform: translateY(0) rotate(0deg)
+		opacity: 0.4
+	100%
+		transform: translateY(-1200px) rotate(720deg)
+		opacity: 0

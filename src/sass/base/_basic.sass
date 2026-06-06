@@ -1,0 +1,94 @@
+/* ---------------- Basic resets and improvements --------------- */
+*,
+*::before,
+*::after
+	box-sizing: border-box
+*:focus:not(:focus-visible)
+	outline: 0
+*:focus-visible
+	outline: 2px solid var(--focus)
+	outline-offset: 2px
+	border-radius: var(--radius)
+html
+	text-rendering: optimizeLegibility
+	-webkit-font-smoothing: antialiased
+	-moz-osx-font-smoothing: grayscale
+	font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif
+	font-size: 12pt
+	color: var(--txt)
+	background: var(--bg)
+body
+	min-height: 100vh
+	display: flex
+	flex-flow: wrap column
+	gap: .5rem
+	align-items: center
+	justify-content: center
+	letter-spacing: -0.005em
+
+	@media (prefers-reduced-motion: no-preference)
+		scroll-behavior: smooth
+body,html
+	margin: 0
+	padding: 0
+header>*,main>*,footer>*
+	max-width: 60rem
+
+ol, ul
+	list-style: none
+	display: flex
+	flex-direction: column
+	gap: .3rem
+.keep-ls
+	list-style: unset
+img
+	max-width: 100%
+
+table
+	border-collapse: collapse
+
+textarea
+	white-space: revert
+
+hr
+	border: 0
+	border-top: .1rem solid var(--brd)
+
+section
+	overflow-x: hidden
+	display: flex
+	flex-direction: column
+
+.skip-link
+	position: absolute
+	top: -100%
+	left: 1rem
+	padding: .5rem 1rem
+	background: var(--primary)
+	color: var(--white)
+	border-radius: var(--radius)
+	z-index: 100
+	&:focus
+		top: .5rem
+
+.better_r
+	-webkit-font-smoothing: antialiased
+	-moz-font-smoothing: antialiased
+	font-size: 16px
+	letter-spacing: .7px
+	line-height: 1.5
+	text-align: justify
+	text-rendering: optimizelegibility
+	overflow-wrap: break-word
+	word-wrap: break-word
+
+@media print
+	header, footer, .lt_particles, .skip-link, #gt-link, .snackbar, .alert-container
+		display: none !important
+	body
+		background: white
+		color: black
+	.dialog[aria-hidden='true']
+		display: none
+	.test, .test_block, .card
+		break-inside: avoid
