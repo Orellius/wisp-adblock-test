@@ -9,7 +9,7 @@ One screen, speed-test style: how much of the ad/tracker surface does your block
 
 [![Live](https://img.shields.io/badge/live-orellius.github.io%2Fwisp--adblock--test-4d9fec?style=flat-square)](https://orellius.github.io/wisp-adblock-test/)
 [![License](https://img.shields.io/badge/license-CC--BY--NC--SA%204.0-56b366?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Based on](https://img.shields.io/badge/based%20on-Turtlecute33%2Fadblocktest-475569?style=flat-square)](https://github.com/Turtlecute33/adblocktest)
+[![Lineage](https://img.shields.io/badge/continuation%20of-Turtlecute33%2Fadblocktest-475569?style=flat-square)](https://github.com/Turtlecute33/adblocktest)
 
 </div>
 
@@ -65,8 +65,10 @@ node src/script/check_hosts.mjs --prune  # also prune confirmed-dead hosts
 
 Pushing to `master` deploys to GitHub Pages via [`deploy.yml`](.github/workflows/deploy.yml).
 
-## Credits & license
+## Lineage, credits & license
 
-Based on [Turtlecute33/adblocktest](https://github.com/Turtlecute33/adblocktest), itself a fork of [d3ward/toolz](https://github.com/d3ward/toolz) (with Daniela Brozzoni). Reworked by Wisp: one-screen redesign, three-state scoring, redirect-defusal detection, list liveness CI, rebrand.
+This repository is an **independent continuation** of [Turtlecute33/adblocktest](https://github.com/Turtlecute33/adblocktest), itself a fork of [d3ward/toolz](https://github.com/d3ward/toolz). It was detached from the fork network in June 2026 and is maintained by Wisp as part of the Wisp browser project; it is not affiliated with or endorsed by the original authors.
 
-Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): attribution preserved, non-commercial, share-alike.
+**The original work and its design belong to the OG creators**: [d3ward](https://github.com/d3ward), [Turtlecute](https://github.com/Turtlecute33), and Daniela Brozzoni. Wisp's changes on top: one-screen redesign, three-state scoring, redirect-defusal detection, list liveness CI, rebrand.
+
+Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), as inherited from upstream: attribution preserved, non-commercial, share-alike.
