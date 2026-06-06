@@ -85,6 +85,10 @@ module.exports = {
 				type: 'asset/resource'
 			},
 			{
+				test: /\.woff2?$/i,
+				type: 'asset/resource'
+			},
+			{
 				test: /\.ejs$/i,
 				use: ['html-loader', 'template-ejs-loader']
 			},

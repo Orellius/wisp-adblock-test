@@ -5,13 +5,11 @@ import { icons } from '../data/icons'
 import { navbar } from './components/navbar'
 import A11yDialog from './components/dialog'
 import { themeManager } from './components/themeManager'
-import { gotop } from './components/gotop'
 import { aos } from './components/aos'
 import { fadeIn, fadeOut } from './components/fade'
 import { Snackbar } from './components/snackbar'
 import { LocalStorageManager } from './components/localStorage'
 const DEFAULT_SETTINGS = {
-	collapseAll: true,
 	showCF: true,
 	showSL: true
 }
@@ -235,6 +233,213 @@ function countTotalTests() {
 	return count
 }
 
+// --- One-screen tile grid -------------------------------------------------
+// Each test family renders as a live instrument tile; details open in a dialog.
+const TILE_ICONS = {
+	'Cosmetic Filter':
+		"<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M0 0h24v24H0z' stroke='none'/><circle cx='12' cy='12' r='2'/><path d='M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7'/></svg>",
+	'Ad Scripts':
+		"<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M17 20h-11a3 3 0 0 1 0 -6h11a3 3 0 0 0 0 6h1a3 3 0 0 0 3 -3v-11a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v8'/></svg>"
+}
+
+// Most icon strings lack a viewBox, so CSS downscaling crops them instead of scaling.
+function vb(markup) {
+	if (!markup) return ''
+	return markup.indexOf('viewBox') === -1
+		? markup.replace('<svg ', "<svg viewBox='0 0 24 24' ")
+		: markup
+}
+
+function tileEntries() {
+	const entries = Object.keys(data).map((key) => {
+		let total = 0
+		Object.keys(data[key]).forEach((p) => {
+			total += data[key][p].length
+		})
+		return { key, kind: 'hosts', total }
+	})
+	if (settings['showCF'] === true) {
+		entries.push({ key: 'Cosmetic Filter', kind: 'cosmetic', total: 2 })
+	}
+	if (settings['showSL'] === true) {
+		entries.push({ key: 'Ad Scripts', kind: 'script', total: 2 })
+	}
+	return entries
+}
+
+function buildTiles() {
+	const tilesWrap = document.getElementById('tiles')
+	if (!tilesWrap) return
+	tilesWrap.innerHTML = ''
+	tileEntries().forEach((entry, i) => {
+		const tile = document.createElement('button')
+		tile.type = 'button'
+		tile.className = 'tile is-running'
+		tile.dataset.cat = entry.key
+		tile.dataset.kind = entry.kind
+		tile.style.setProperty('--boot', i * 70 + 'ms')
+		tile.setAttribute('aria-label', entry.key + ' test details')
+		tile.innerHTML =
+			"<span class='tile_head'>" +
+			vb(icons[entry.key] || TILE_ICONS[entry.key]) +
+			'<span>' +
+			entry.key +
+			'</span></span>' +
+			"<span class='tile_count'><b>0</b><i>/" +
+			entry.total +
+			'</i></span>' +
+			"<span class='tile_bar'><i></i></span>" +
+			"<span class='tile_sub'>testing…</span>"
+		tile.addEventListener('click', () => {
+			openCategoryDialog(entry)
+		})
+		tilesWrap.appendChild(tile)
+	})
+	const gaugeValue = document.querySelector('.lt_value')
+	if (gaugeValue) gaugeValue.textContent = '0%'
+}
+
+function tileProgress(entry) {
+	let blocked = 0
+	let done = 0
+	if (entry.kind === 'hosts') {
+		const cat = abt.hosts[entry.key] || {}
+		Object.keys(cat).forEach((provider) => {
+			Object.keys(cat[provider]).forEach((url) => {
+				done += 1
+				if (cat[provider][url] === true) blocked += 1
+			})
+		})
+	} else {
+		const pair =
+			entry.kind === 'cosmetic'
+				? [abt.cosmetic_test.static, abt.cosmetic_test.dynamic]
+				: [abt.script.ads, abt.script.pagead]
+		pair.forEach((result) => {
+			if (result !== null) {
+				done += 1
+				if (result === true) blocked += 1
+			}
+		})
+	}
+	return { blocked, done }
+}
+
+function tileColor(blocked, total) {
+	const ratio = total === 0 ? 0 : blocked / total
+	if (ratio > 0.6) return 'var(--green)'
+	if (ratio > 0.3) return 'var(--orange)'
+	return 'var(--red)'
+}
+
+function update_tiles() {
+	document.querySelectorAll('#tiles .tile').forEach((tile) => {
+		const entry = {
+			key: tile.dataset.cat,
+			kind: tile.dataset.kind
+		}
+		const total = Number(
+			tile.querySelector('.tile_count i').textContent.slice(1)
+		)
+		const { blocked, done } = tileProgress(entry)
+		tile.querySelector('.tile_count b').textContent = blocked
+		const color = tileColor(blocked, total)
+		tile.style.setProperty('--tile-color', color)
+		tile.querySelector('.tile_bar i').style.width =
+			total === 0 ? '0%' : (100 / total) * blocked + '%'
+		const sub = tile.querySelector('.tile_sub')
+		if (done < total) {
+			sub.textContent = done + ' of ' + total + ' checked…'
+		} else {
+			tile.classList.remove('is-running')
+			const leaked = total - blocked
+			sub.textContent =
+				leaked === 0
+					? 'fully blocked'
+					: leaked + ' got through — details'
+		}
+	})
+}
+
+function hostRow(label, status, onCopy) {
+	const row = document.createElement(onCopy ? 'button' : 'div')
+	if (onCopy) row.type = 'button'
+	row.className = 'host_row'
+	const statusIcon =
+		status === true
+			? icons['v']
+			: status === false
+			? icons['x']
+			: icons['cdot']
+	row.innerHTML = vb(statusIcon)
+	const span = document.createElement('span')
+	span.textContent = label
+	row.appendChild(span)
+	if (onCopy) {
+		row.addEventListener('click', onCopy)
+		row.setAttribute('title', 'Copy to clipboard')
+	}
+	return row
+}
+
+function openCategoryDialog(entry) {
+	const dialogEl = document.getElementById('dlg_category')
+	if (!dialogEl) return
+	document.getElementById('dlg_category-title').textContent = entry.key
+	const body = document.getElementById('dlg_category_body')
+	body.innerHTML = ''
+	if (entry.kind === 'hosts') {
+		const cat = abt.hosts[entry.key] || {}
+		Object.keys(data[entry.key]).forEach((provider) => {
+			const head = document.createElement('div')
+			head.className = 'cat_provider'
+			head.innerHTML = vb(icons[provider]) + '<span></span>'
+			head.querySelector('span').textContent = provider
+			body.appendChild(head)
+			data[entry.key][provider].forEach((url) => {
+				const status = cat[provider] ? cat[provider][url] : undefined
+				body.appendChild(
+					hostRow(url, status, () => {
+						copyToClip(url)
+					})
+				)
+			})
+		})
+	} else if (entry.kind === 'cosmetic') {
+		body.appendChild(hostRow('Static ad element', abt.cosmetic_test.static))
+		body.appendChild(
+			hostRow('Dynamic ad element', abt.cosmetic_test.dynamic)
+		)
+		const explainer = document.querySelector('#cf_wrap details')
+		if (explainer) body.appendChild(explainer.cloneNode(true))
+	} else {
+		body.appendChild(hostRow('ads.js', abt.script.ads))
+		body.appendChild(hostRow('pagead.js', abt.script.pagead))
+		const explainer = document.querySelector('#sl_wrap details')
+		if (explainer) body.appendChild(explainer.cloneNode(true))
+	}
+	new A11yDialog(dialogEl).show()
+}
+
+function update_totals() {
+	const r = document.querySelector('#adb_test_r')
+	if (!r) return
+	r.innerHTML =
+		'<span>' +
+		vb(icons['cdot']) +
+		' Total : ' +
+		abt.total +
+		'</span><span>' +
+		vb(icons['v']) +
+		' ' +
+		abt.blocked +
+		' blocked</span><span>' +
+		vb(icons['x']) +
+		' ' +
+		abt.notblocked +
+		' not blocked</span>'
+}
+
 function fetchWithTimeout(resource, config, timeoutMs) {
 	if (typeof AbortController !== 'undefined') {
 		const controller = new AbortController()
@@ -324,21 +529,6 @@ async function check_url(url, div, parent, k1, k2) {
 
 // Track elements that already have click listeners
 const _clickListenerElements = new WeakSet()
-
-//Function to collapse a test
-function collapse_category(cc, c) {
-	const others = document.querySelectorAll('.test_collapse')
-	others.forEach((element) => {
-		if (cc === true) element.parentElement.classList.add('show')
-		else element.parentElement.classList.remove('show')
-		if (c === true && !_clickListenerElements.has(element)) {
-			_clickListenerElements.add(element)
-			element.addEventListener('click', () => {
-				element.parentElement.classList.toggle('show')
-			})
-		}
-	})
-}
 
 // Function to fetch all the tests
 async function fetchTests() {
@@ -548,10 +738,10 @@ function set_liquid() {
 		p > 30 ? (p > 60 ? 'var(--green)' : 'var(--orange)') : 'var(--red)'
 	document.body.style.setProperty('--liquid-percentage', 45 - p + '%')
 	document.body.style.setProperty('--liquid-color', c)
-	document.body.style.setProperty(
-		'--liquid-title',
-		"'" + Math.round(p) + "%'"
-	)
+	const gaugeValue = document.querySelector('.lt_value')
+	if (gaugeValue) gaugeValue.textContent = Math.round(p) + '%'
+	update_tiles()
+	update_totals()
 }
 
 function stopAdBlockTesting() {
@@ -653,7 +843,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 		})
 	})
-	new gotop()
 	new aos()
 	Object.keys(settings).forEach((key) => {
 		try {
@@ -661,8 +850,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			c.checked = settings[key]
 			c.addEventListener('change', () => {
 				settings[key] = c.checked
-				if (key === 'collapseAll')
-					collapse_category(settings[key], false)
 				LS.set('settings', settings)
 			})
 		} catch (error) {
@@ -670,6 +857,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	})
 	render_tests()
+	buildTiles()
 
 	let testRunning = false
 	async function runTest() {
@@ -677,7 +865,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		testRunning = true
 		try {
 			await startAdBlockTesting()
-			collapse_category(settings['collapseAll'], true)
 			await new Promise((resolve) => requestAnimationFrame(resolve))
 			add_report()
 			const tsl = document.createElement('div')
@@ -690,21 +877,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				abt.notblocked
 			tsl.innerHTML = tslog
 			test_log.appendChild(tsl)
-			const r = document.querySelector('#adb_test_r')
-			r.innerHTML =
-				'<span>' +
-				icons['cdot'] +
-				' Total : ' +
-				abt.total +
-				'</span><span>' +
-				icons['v'] +
-				' ' +
-				abt.blocked +
-				' blocked</span><span>' +
-				icons['x'] +
-				' ' +
-				abt.notblocked +
-				' not blocked</span>'
+			update_totals()
 		} catch (error) {
 			console.error('Ad block test failed:', error)
 			snackbar.show('Test failed. Please retry.', 'error')
@@ -714,9 +887,8 @@ document.addEventListener('DOMContentLoaded', function () {
 			test_log.appendChild(errorLog)
 		} finally {
 			stopAdBlockTesting()
-			const adbTest = document.querySelector('#adb_test')
-			adbTest.classList.remove('measuring')
-			fadeIn(adbTest, 'flex')
+			// #adb_test stays hidden: it is the measurement sandbox, the tiles are the UI
+			document.querySelector('#adb_test').classList.remove('measuring')
 			testRunning = false
 		}
 	}
@@ -733,9 +905,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		location.reload()
 	})
 	const stxt =
-		'https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.txt'
+		'https://raw.githubusercontent.com/Orellius/wisp-adblock-test/master/src/d3host.txt'
 	const sadblock =
-		'https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.adblock'
+		'https://raw.githubusercontent.com/Orellius/wisp-adblock-test/master/src/d3host.adblock'
 	document
 		.querySelector('#hostListTxt')
 		.addEventListener('click', function () {
