@@ -148,6 +148,27 @@ header nav > a
 			border-color: var(--brd)
 			background: var(--bg2)
 
+.sponsor_btn
+	display: inline-flex
+	align-items: center
+	gap: .5rem
+	padding: .5rem 1rem
+	border: 1px solid var(--brd)
+	border-radius: 8px
+	background: var(--bg3)
+	color: var(--txt)
+	font-family: var(--font-display)
+	font-weight: 500
+	text-decoration: none
+	transition: border-color .2s ease, background-color .2s ease
+	svg
+		height: 1.15rem
+		width: 1.15rem
+		color: var(--red)
+	&:hover, &:focus-visible
+		border-color: var(--red)
+		background: var(--hover)
+
 .shell_credit
 	margin: 0
 	margin-left: auto
