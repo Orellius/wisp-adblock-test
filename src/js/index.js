@@ -52,6 +52,9 @@ function normalizeResults(raw) {
 					notblocked: Number.isFinite(entry.abt.notblocked)
 						? entry.abt.notblocked
 						: 0,
+					unreachable: Number.isFinite(entry.abt.unreachable)
+						? entry.abt.unreachable
+						: 0,
 					cosmetic_test: isPlainObject(entry.abt.cosmetic_test)
 						? entry.abt.cosmetic_test
 						: { static: null, dynamic: null },
@@ -154,6 +157,7 @@ function resetTestState() {
 	abt.total = 0
 	abt.blocked = 0
 	abt.notblocked = 0
+	abt.unreachable = 0
 	abt.cosmetic_test.static = null
 	abt.cosmetic_test.dynamic = null
 	abt.script.ads = null
@@ -207,6 +211,7 @@ let abt = {
 	total: 0,
 	blocked: 0,
 	notblocked: 0,
+	unreachable: 0,
 	cosmetic_test: {
 		static: null,
 		dynamic: null
@@ -235,6 +240,9 @@ function countTotalTests() {
 
 // --- One-screen tile grid -------------------------------------------------
 // Each test family renders as a live instrument tile; details open in a dialog.
+const UNREACHABLE_ICON =
+	"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' stroke-width='2' stroke='var(--txt-l)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M0 0h24v24H0z' stroke='none'/><circle cx='12' cy='12' r='9'/><path d='M9 12h6'/></svg>"
+
 const TILE_ICONS = {
 	'Cosmetic Filter':
 		"<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M0 0h24v24H0z' stroke='none'/><circle cx='12' cy='12' r='2'/><path d='M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7'/></svg>",
@@ -277,6 +285,7 @@ function buildTiles() {
 		tile.className = 'tile is-running'
 		tile.dataset.cat = entry.key
 		tile.dataset.kind = entry.kind
+		tile.dataset.total = entry.total
 		tile.style.setProperty('--boot', i * 70 + 'ms')
 		tile.setAttribute('aria-label', entry.key + ' test details')
 		tile.innerHTML =
@@ -302,12 +311,14 @@ function buildTiles() {
 function tileProgress(entry) {
 	let blocked = 0
 	let done = 0
+	let unreachable = 0
 	if (entry.kind === 'hosts') {
 		const cat = abt.hosts[entry.key] || {}
 		Object.keys(cat).forEach((provider) => {
 			Object.keys(cat[provider]).forEach((url) => {
 				done += 1
 				if (cat[provider][url] === true) blocked += 1
+				else if (cat[provider][url] === 'unreachable') unreachable += 1
 			})
 		})
 	} else {
@@ -322,7 +333,7 @@ function tileProgress(entry) {
 			}
 		})
 	}
-	return { blocked, done }
+	return { blocked, done, unreachable }
 }
 
 function tileColor(blocked, total) {
@@ -338,25 +349,27 @@ function update_tiles() {
 			key: tile.dataset.cat,
 			kind: tile.dataset.kind
 		}
-		const total = Number(
-			tile.querySelector('.tile_count i').textContent.slice(1)
-		)
-		const { blocked, done } = tileProgress(entry)
+		const total = Number(tile.dataset.total)
+		const { blocked, done, unreachable } = tileProgress(entry)
+		const effective = total - unreachable
 		tile.querySelector('.tile_count b').textContent = blocked
-		const color = tileColor(blocked, total)
+		tile.querySelector('.tile_count i').textContent = '/' + effective
+		const color = tileColor(blocked, effective)
 		tile.style.setProperty('--tile-color', color)
 		tile.querySelector('.tile_bar i').style.width =
-			total === 0 ? '0%' : (100 / total) * blocked + '%'
+			effective === 0 ? '0%' : (100 / effective) * blocked + '%'
 		const sub = tile.querySelector('.tile_sub')
 		if (done < total) {
 			sub.textContent = done + ' of ' + total + ' checked…'
 		} else {
 			tile.classList.remove('is-running')
-			const leaked = total - blocked
-			sub.textContent =
+			const leaked = total - blocked - unreachable
+			let text =
 				leaked === 0
 					? 'fully blocked'
 					: leaked + ' got through — details'
+			if (unreachable > 0) text += ' · ' + unreachable + ' unreachable'
+			sub.textContent = text
 		}
 	})
 }
@@ -370,6 +383,8 @@ function hostRow(label, status, onCopy) {
 			? icons['v']
 			: status === false
 			? icons['x']
+			: status === 'unreachable'
+			? UNREACHABLE_ICON
 			: icons['cdot']
 	row.innerHTML = vb(statusIcon)
 	const span = document.createElement('span')
@@ -428,7 +443,7 @@ function update_totals() {
 		'<span>' +
 		vb(icons['cdot']) +
 		' Total : ' +
-		abt.total +
+		(abt.total - abt.unreachable) +
 		'</span><span>' +
 		vb(icons['v']) +
 		' ' +
@@ -437,7 +452,14 @@ function update_totals() {
 		vb(icons['x']) +
 		' ' +
 		abt.notblocked +
-		' not blocked</span>'
+		' not blocked</span>' +
+		(abt.unreachable > 0
+			? '<span>' +
+			  vb(UNREACHABLE_ICON) +
+			  ' ' +
+			  abt.unreachable +
+			  ' unreachable</span>'
+			: '')
 }
 
 function fetchWithTimeout(resource, config, timeoutMs) {
@@ -473,22 +495,38 @@ function fetchWithTimeout(resource, config, timeoutMs) {
 	})
 }
 
-function markUnknownHost(url, hostDiv, parent, k1, k2, reason = 'unknown') {
-	hostDiv.innerHTML = icons['v']
+// A host that never answers is unknown, not blocked: dead domains and slow
+// networks must not inflate the score. Excluded from the percentage.
+function markUnreachableHost(url, hostDiv, k1, k2, reason) {
+	hostDiv.innerHTML = vb(UNREACHABLE_ICON)
 	const urlSpan = document.createElement('span')
 	urlSpan.textContent = url
 	hostDiv.appendChild(urlSpan)
-	abt.blocked += 1
-	Object.assign(abt.hosts[k1][k2], { [url]: true })
-	tslog += '<br> ' + url + ' - blocked (' + reason + ')'
+	abt.unreachable += 1
+	Object.assign(abt.hosts[k1][k2], { [url]: 'unreachable' })
+	tslog += '<br> ' + url + ' - unreachable (' + reason + ')'
+}
+
+// Blockers using redirect rules (uBO `redirect=`) answer the request locally
+// with a neutered resource: the fetch succeeds, but in ~0ms with zero bytes
+// transferred. A real cross-origin HEAD needs DNS+TCP+TLS, so sub-5ms with
+// transferSize 0 means the blocker ate it.
+function answeredLocally(resource) {
+	if (typeof performance === 'undefined' || !performance.getEntriesByName)
+		return false
+	const entries = performance.getEntriesByName(resource)
+	const entry = entries[entries.length - 1]
+	return !!entry && entry.duration < 5 && entry.transferSize === 0
 }
 
 //Function to check a host blocking status
 async function check_url(url, div, parent, k1, k2) {
 	const config = {
 		method: 'HEAD',
-		mode: 'no-cors'
+		mode: 'no-cors',
+		cache: 'no-store'
 	}
+	const resource = 'https://' + url + '/fakepage.html'
 	const hostDiv = document.createElement('div')
 	hostDiv.onclick = () => {
 		copyToClip(url)
@@ -497,16 +535,21 @@ async function check_url(url, div, parent, k1, k2) {
 	const urlSpan = document.createElement('span')
 	urlSpan.textContent = url
 	try {
-		await fetchWithTimeout(
-			'https://' + url + '/fakepage.html',
-			config,
-			getHostFetchTimeout()
-		)
+		await fetchWithTimeout(resource, config, getHostFetchTimeout())
 		// With mode: 'no-cors', a successful response is opaque (status 0).
-		// Any response means the request was NOT blocked.
+		// A response normally means the request was NOT blocked, unless it
+		// was answered locally by a redirect rule.
+		if (answeredLocally(resource)) {
+			hostDiv.innerHTML = vb(icons['v'])
+			hostDiv.appendChild(urlSpan)
+			abt.blocked += 1
+			Object.assign(abt.hosts[k1][k2], { [url]: true })
+			tslog += '<br> ' + url + ' - blocked (answered locally)'
+			return
+		}
 		parent.dataset.hasFailure = 'true'
 		parent.style.background = 'var(--red)'
-		hostDiv.innerHTML = icons['x']
+		hostDiv.innerHTML = vb(icons['x'])
 		hostDiv.appendChild(urlSpan)
 		abt.notblocked += 1
 		Object.assign(abt.hosts[k1][k2], { [url]: false })
@@ -516,10 +559,10 @@ async function check_url(url, div, parent, k1, k2) {
 			error &&
 			(error.name === 'AbortError' || error.name === 'TimeoutError')
 		) {
-			markUnknownHost(url, hostDiv, parent, k1, k2, 'timed out')
+			markUnreachableHost(url, hostDiv, k1, k2, 'timed out')
 			return
 		}
-		hostDiv.innerHTML = icons['v']
+		hostDiv.innerHTML = vb(icons['v'])
 		hostDiv.appendChild(urlSpan)
 		abt.blocked += 1
 		Object.assign(abt.hosts[k1][k2], { [url]: true })
@@ -732,8 +775,10 @@ async function startAdBlockTesting() {
 }
 
 function set_liquid() {
-	if (abt.total === 0) return
-	const p = (100 / abt.total) * abt.blocked
+	// Unreachable hosts are unknowns: score only what actually answered or errored
+	const effective = abt.total - abt.unreachable
+	if (effective <= 0) return
+	const p = (100 / effective) * abt.blocked
 	const c =
 		p > 30 ? (p > 60 ? 'var(--green)' : 'var(--orange)') : 'var(--red)'
 	document.body.style.setProperty('--liquid-percentage', 45 - p + '%')
