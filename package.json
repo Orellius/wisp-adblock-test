@@ -23,15 +23,15 @@
 		"lint": "eslint 'src/**/*.{js,ts}' --max-warnings=0 && echo 'Linting complete!'",
 		"lint-fix": "eslint  'src/**/*.{js,ts}' --fix"
 	},
-	"author": "Turtlecute33",
-	"homepage": "https://adblock.turtlecute.org",
+	"author": "Wisp (Orellius)",
+	"homepage": "https://orellius.github.io/wisp-adblock-test/",
 	"license": "(CC BY-NC-SA 4.0)",
 	"bugs": {
-		"url": "https://github.com/Turtlecute33/adblocktest/issues"
+		"url": "https://github.com/Orellius/wisp-adblock-test/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Turtlecute33/adblocktest.git"
+		"url": "https://github.com/Orellius/wisp-adblock-test.git"
 	},
 	"dependencies": {},
 	"devDependencies": {
