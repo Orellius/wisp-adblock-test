@@ -94,7 +94,10 @@ header nav > a
 	display: block
 	height: 1.75rem
 	width: 1.75rem
-	border-radius: 7px
+
+// monochrome white mark: flip for light surfaces
+[data-theme="light"] .brandmark
+	filter: invert(1)
 
 .wordmark
 	font-family: var(--font-display)
