@@ -5,6 +5,7 @@
 @use "./theme/dark"
 
 @use "./base/basic"
+@use "./base/fonts"
 @use "./extra/aos"
 @use "./elements/typography"
 
@@ -14,10 +15,12 @@
 @use "./layout/container"
 @use "./layout/grid"
 @use "./layout/footer"
+@use "./layout/shell"
 
 @use "./elements/button"
 @use "./components/snackbar"
 @use "./components/card"
+@use "./components/tile"
 @use "./components/btcpay"
 @use "./elements/form"
 @use "./elements/code"
@@ -44,58 +47,10 @@
 @use "./utilities"
 
 main
-	min-height: 100vh
 	--bg-details: var(--bg3)
-#start_test, #adb_test_r
+#start_test
 	width: 100%
 	max-width: 12rem
-.sponsor_banner_wrap
-	padding-top: 1rem
-.sponsor_banner
-	display: block
-	position: relative
-	overflow: hidden
-	border-radius: 12px
-	background: #0e1216
-	border: 1px solid var(--brd)
-	line-height: 0
-	transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease
-	img
-		display: block
-		width: 100%
-		height: auto
-	.sponsor_tag
-		position: absolute
-		top: .6rem
-		right: .6rem
-		font-size: .65rem
-		font-weight: 600
-		letter-spacing: .08em
-		text-transform: uppercase
-		padding: 3px 10px
-		border-radius: 999px
-		background: rgba(255,255,255,.1)
-		color: rgba(255,255,255,.78)
-		backdrop-filter: blur(6px)
-		-webkit-backdrop-filter: blur(6px)
-		line-height: 1.4
-	&:hover, &:focus-visible
-		transform: translateY(-1px)
-		border-color: var(--primary)
-		box-shadow: 0 8px 28px rgba(0,0,0,.28)
-		outline: none
-	@media (max-width: 40em)
-		aspect-ratio: 6.35 / 1
-		min-height: 3.25rem
-		img
-			position: absolute
-			inset: 0
-			width: 100%
-			height: 100%
-			object-fit: cover
-			object-position: left center
-		.sponsor_tag
-			display: none
 #dlg_compatibility
 	z-index: 52
 #adb_test
@@ -244,7 +199,7 @@ footer>div
 	align-items: center
 .lt_particles
 	width: 15rem
-	height: 7.5rem
+	height: 2.75rem
 	display: flex
 	justify-content: center
 	align-items: center
@@ -384,10 +339,10 @@ footer>div
 	background-color: var(--bg2)
 
 .lt_circle
-	width: 200px
-	height: 200px
+	width: clamp(11rem, 24vmin, 16rem)
+	height: clamp(11rem, 24vmin, 16rem)
 	background: var(--liquid-color)
-	border: 3px solid var(--black-h)
+	border: 1px solid var(--brd)
 	border-radius: 50%
 	overflow: hidden
 	clip-path: border-box
@@ -432,35 +387,18 @@ footer>div
 
 .lt_cwrap .lt_value
 	position: absolute
-	height: 100%
-	right: 0
-	bottom: 0
-	width: 100%
-
-.lt_cwrap .lt_value::after,
-.lt_cwrap .lt_value::before
-	content: var(--liquid-title)
-	position: inherit
-	left: 100%
-	margin-left: 10px
-	bottom: calc(45% - var(--liquid-percentage))
-	transform: translateY(50%)
-	background: var(--liquid-color)
-	color: var(--white)
-	padding: 10px
-	font-size: 20px
-	font-weight: bold
-	border-radius: 8px
-	transition: 3s
-
-.lt_cwrap .lt_value::after
-	content: ''
-	border: 12px solid transparent
-	border-right-color: var(--liquid-color)
-	padding: 0
-	border-radius: 0
-	background: transparent
-	transform: translate(-78%, 50%)
+	inset: 0
+	z-index: 6
+	display: flex
+	align-items: center
+	justify-content: center
+	pointer-events: none
+	font-family: var(--font-display)
+	font-weight: 700
+	font-variant-numeric: tabular-nums
+	font-size: clamp(2.1rem, 5.2vmin, 3.2rem)
+	color: var(--txt)
+	text-shadow: 0 1px 10px rgba(0, 0, 0, .4)
 
 #dlg_faq p
 	-moz-osx-font-smoothing: grayscale
@@ -477,6 +415,4 @@ footer>div
 	.lt_wave:before, .lt_wave:after
 		animation: none
 	.lt_wave
-		transition: none
-	.lt_cwrap .lt_value::after, .lt_cwrap .lt_value::before
 		transition: none
