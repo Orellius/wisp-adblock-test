@@ -30,9 +30,6 @@ jobs:
       - name: Purge
         run: npm run purge
 
-      - name: Create CNAME file
-        run: echo "adblock.turtlecute.org" > dist/CNAME
-
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
