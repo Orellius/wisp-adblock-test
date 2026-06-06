@@ -12,21 +12,21 @@ const header = (entries, date, comment) => {
 	let ext = comment === '#' ? '.txt' : '.adblock'
 	return (
 		comment +
-		' Title: Turtlecute Host List\n' +
+		' Title: Wisp Host List\n' +
 		comment +
 		' Expires: 1 days\n' +
 		comment +
 		' Description: Simple and small list with the most popular advertising, tracking, analytics and social advertising services\n' +
 		comment +
-		' Homepage: https://github.com/Turtlecute33/adblocktest\n' +
+		' Homepage: https://github.com/Orellius/wisp-adblock-test\n' +
 		comment +
 		' License: CC BY-NC-SA\n' +
 		comment +
-		' Source: https://github.com/Turtlecute33/adblocktest/blob/master/src/d3host' +
+		' Source: https://github.com/Orellius/wisp-adblock-test/blob/master/src/d3host' +
 		ext +
 		'\n\n' +
 		comment +
-		' This list cover all the tests on https://adblock.turtlecute.org\n' +
+		' This list cover all the tests on https://orellius.github.io/wisp-adblock-test/\n' +
 		comment +
 		' Type : Stable\n' +
 		comment +
@@ -38,7 +38,7 @@ const header = (entries, date, comment) => {
 		date +
 		'\n' +
 		comment +
-		' Created by: Turtlecute'
+		' Created by: Turtlecute, maintained by Wisp'
 	)
 }
 function collectHosts(obj) {
@@ -106,7 +106,7 @@ function build(obj, comment, pre, post) {
 	})
 	if (pre === '||')
 		txt +=
-			'\n*$3p,domain=adblock.turtlecute.org\n/pagead.js$domain=adblock.turtlecute.org\n@@*$redirect-rule,domain=adblock.turtlecute.org\nadblock.turtlecute.org##.textads'
+			'\n*$3p,domain=orellius.github.io\n/pagead.js$domain=orellius.github.io\n@@*$redirect-rule,domain=orellius.github.io\norellius.github.io##.textads'
 	const date = new Date()
 	const d =
 		date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
