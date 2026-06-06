@@ -1,28 +1,30 @@
 @use "../settings/variables" as *
 
+// Vercel-style neutral dark per design-taste.md: one near-black base (never #000),
+// elevation via white-alpha overlays, alpha-white hairline borders, accents desaturated 20-30%.
 [data-theme="dark"]
-	//Color Palette
-	--blue: #{$blue-500}
-	--blue-l: #{$blue-400}
-	--blue-h:  #{$blue-800}
-	--blue-d: #{$blue-600}
-	--purple: #{$purple-500}
-	--purple-l: #{$purple-400}
-	--purple-h:  #{$purple-800}
-	--purple-d: #{$purple-600}
-	--green: #{$green-500}
-	--green-h: #{$green-800}
-	--green-l: #{$green-400}
-	--green-d: #{$green-300}
-	--red: #{$red-500}
-	--red-h: #{$red-800}
-	--red-l: #{$red-400}
-	--red-d: #{$red-300}
-	--orange: #{$orange-500}
-	--orange-h: #{$orange-800}
-	--orange-l: #{$orange-400}
-	--orange-d: #{$orange-600}
-	--txt-l:var(--white-l)
+	//Color Palette (desaturated for dark surfaces)
+	--blue: #4d9fec
+	--blue-l: #74b6f5
+	--blue-h: #12243a
+	--blue-d: #2f7fd1
+	--purple: #9d7fd8
+	--purple-l: #b79ce6
+	--purple-h: #241a38
+	--purple-d: #8463c2
+	--green: #56b366
+	--green-h: #16291a
+	--green-l: #74c884
+	--green-d: #a5dcb0
+	--red: #e05d5d
+	--red-h: #321616
+	--red-l: #ef8585
+	--red-d: #f3b8b8
+	--orange: #d9a23d
+	--orange-h: #2e2310
+	--orange-l: #e8bb6a
+	--orange-d: #f0d4a3
+	--txt-l: #a1a1a1
 	--txt-on-p : var(--white)
 	--txt-on-red : var(--white)
 	--txt-on-green : var(--white)
@@ -31,22 +33,22 @@
 	//Text Colors
 	--txt: var(--white)
 	--txt-r: var(--black)
-	//Background Colors
-	--bg3: #{$gray-700}
-	--bg2: #{$gray-800}
-	--bg: #{$gray-900}
+	//Background Colors: base + white-overlay elevations
+	--bg3: #242428
+	--bg2: #1a1a1c
+	--bg: #0f0f10
 
-	//Border
-	--brd: #{$gray-600}
-	--aside-bg-h: #{$gray-700}
+	//Border: alpha-white hairline, not gray
+	--brd: rgba(255, 255, 255, 0.1)
+	--aside-bg-h: #232326
 	--bg-card: var(--bg)
 	--bg-details: var(--bg2)
 	--bg-details2: var(--bg3)
 	--txt-details-open: var(--txt)
-	--accent: #{$blue-800}
-	--active: #{$gray-700}
+	--accent: #12243a
+	--active: #232326
 	--focus: var(--primary)
-	--hover: #{$gray-700}
+	--hover: #232326
 	--input-bg: var(--bg2)
 	--input-txt: var(--txt)
 	--input-focus: var(--primary-l)
@@ -54,17 +56,17 @@
 	--overlay-bg: rgba(0, 0, 0, 0.8)
 	--shadow: none
 	--b-shadow: var(--black)
-	//White color utilities
-	--white: #{$white-0}
-	--white-h: #{$gray-800}
-	--white-l: #{$gray-700}
+	//White color utilities (not pure white: halation)
+	--white: #f2f2f2
+	--white-h: #1f1f23
+	--white-l: #2a2a2f
 	//Heading text
-	--txt-h: #{$gray-300}
+	--txt-h: #a1a1a1
 	//Yellow
-	--yellow: #{$orange-500}
+	--yellow: #d9a23d
 	//Navbar
 	--bg-nav: var(--bg2)
-	--bg-nav-h: #{$gray-700}
+	--bg-nav-h: #232326
 	--bb-nav: var(--primary)
 	//Buttons
 	--btn-bg: var(--bg3)
@@ -72,7 +74,7 @@
 	--btn-brd: var(--brd)
 	--btn-hs: 0
 	--btn-f: var(--bg2)
-	--btn-bg-h: #{$gray-600}
+	--btn-bg-h: #2e2e32
 	--btn-sd: 0 1px var(--btn-brd)
 	--btn-radius: .5rem
 	//Tabs
@@ -82,7 +84,7 @@
 	//Table
 	--bg-table: var(--bg2)
 	--fake-brd-table: inset 0 0px 0px 1px var(--bg3)
-	--bg-table-hover: #{$gray-700}
+	--bg-table-hover: #232326
 	--brd-table: var(--bg3)
 
 [data-theme="light"] .light-icon,[data-theme="dark"] .dark-icon

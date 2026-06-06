@@ -1,0 +1,17 @@
+// Self-hosted display font — a tracker-test page must not call out to font CDNs.
+@font-face
+	font-family: 'Chakra Petch'
+	font-style: normal
+	font-weight: 500
+	font-display: swap
+	src: url('../assets/fonts/chakra-petch-500.woff2') format('woff2')
+
+@font-face
+	font-family: 'Chakra Petch'
+	font-style: normal
+	font-weight: 700
+	font-display: swap
+	src: url('../assets/fonts/chakra-petch-700.woff2') format('woff2')
+
+\:root
+	--font-display: 'Chakra Petch', -apple-system, system-ui, sans-serif
