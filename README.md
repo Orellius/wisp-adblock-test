@@ -71,4 +71,14 @@ This repository is an **independent continuation** of [Turtlecute33/adblocktest]
 
 **The original work and its design belong to the OG creators**: [d3ward](https://github.com/d3ward), [Turtlecute](https://github.com/Turtlecute33), and Daniela Brozzoni. Wisp's changes on top: one-screen redesign, three-state scoring, redirect-defusal detection, list liveness CI, rebrand.
 
+The adopted history is squashed into a single import commit; the complete original history, with every contributor's commits intact, lives on the [`upstream-history`](https://github.com/Orellius/wisp-adblock-test/tree/upstream-history) branch and in the upstream repository.
+
 Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), as inherited from upstream: attribution preserved, non-commercial, share-alike.
+
+---
+
+### Original contributors
+
+This project stands on work by the people who built `toolz` and `adblocktest` before Wisp adopted it. Thank you:
+
+[**d3ward**](https://github.com/d3ward) (Eduard Ursu) — creator of the original toolz adblock test · [**Turtlecute**](https://github.com/Turtlecute33) — adblocktest fork author and maintainer · **Daniela Brozzoni** · [**hagezi**](https://github.com/hagezi) (Gerd Zelo) · [**fanboynz**](https://github.com/ryanbr) · **Federico Pedemonte** · **TheMonDon** · **raizo** · **GregT** · **Dustin** · **CoderMonkey1956** · **Chon Bongo**
