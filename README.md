@@ -71,14 +71,41 @@ This repository is an **independent continuation** of [Turtlecute33/adblocktest]
 
 **The original work and its design belong to the OG creators**: [d3ward](https://github.com/d3ward), [Turtlecute](https://github.com/Turtlecute33), and Daniela Brozzoni. Wisp's changes on top: one-screen redesign, three-state scoring, redirect-defusal detection, list liveness CI, rebrand.
 
-The adopted history is squashed into a single import commit; the complete original history, with every contributor's commits intact, lives on the [`upstream-history`](https://github.com/Orellius/wisp-adblock-test/tree/upstream-history) branch and in the upstream repository.
+The adopted history is squashed into a single import commit; the complete original history, with every contributor's commits intact, lives on the [`upstream-history`](https://github.com/Orellius/wisp-adblock-test/tree/upstream-history) tag and in the upstream repository.
 
 Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), as inherited from upstream: attribution preserved, non-commercial, share-alike.
 
 ---
 
+<div align="center">
+
 ### Original contributors
 
-This project stands on work by the people who built `toolz` and `adblocktest` before Wisp adopted it. Thank you:
+*This project stands on the shoulders of the people who built `toolz` and `adblocktest`. Thank you.*
 
-[**d3ward**](https://github.com/d3ward) (Eduard Ursu) — creator of the original toolz adblock test · [**Turtlecute**](https://github.com/Turtlecute33) — adblocktest fork author and maintainer · **Daniela Brozzoni** · [**hagezi**](https://github.com/hagezi) (Gerd Zelo) · [**fanboynz**](https://github.com/ryanbr) · **Federico Pedemonte** · **TheMonDon** · **raizo** · **GregT** · **Dustin** · **CoderMonkey1956** · **Chon Bongo**
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/d3ward"><img src="https://github.com/d3ward.png?size=144" width="72" alt="d3ward"/><br/><b>d3ward</b></a><br/><sub>created toolz, the original test</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Turtlecute33"><img src="https://github.com/Turtlecute33.png?size=144" width="72" alt="Turtlecute"/><br/><b>Turtlecute</b></a><br/><sub>authored &amp; maintained adblocktest</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/danielabrozzoni"><img src="https://github.com/danielabrozzoni.png?size=144" width="72" alt="Daniela Brozzoni"/><br/><b>Daniela Brozzoni</b></a><br/><sub>core contributor</sub>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/hagezi"><img src="https://github.com/hagezi.png?size=112" width="48" alt="hagezi"/><br/><sub><b>hagezi</b></sub></a></td>
+    <td align="center"><a href="https://github.com/ryanbr"><img src="https://github.com/ryanbr.png?size=112" width="48" alt="fanboynz"/><br/><sub><b>fanboynz</b></sub></a></td>
+    <td align="center"><a href="https://github.com/TheMonDon"><img src="https://github.com/TheMonDon.png?size=112" width="48" alt="TheMonDon"/><br/><sub><b>TheMonDon</b></sub></a></td>
+    <td align="center"><a href="https://github.com/bongochong"><img src="https://github.com/bongochong.png?size=112" width="48" alt="Chon Bongo"/><br/><sub><b>Chon Bongo</b></sub></a></td>
+  </tr>
+</table>
+
+<sub>…and <b>Federico Pedemonte</b>, <b>raizo</b>, <b>GregT</b>, <b>Dustin</b>, <b>CoderMonkey1956</b> — every original commit preserved on the <a href="https://github.com/Orellius/wisp-adblock-test/tree/upstream-history"><code>upstream-history</code></a> tag.</sub>
+
+</div>
