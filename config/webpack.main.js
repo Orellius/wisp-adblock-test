@@ -17,7 +17,8 @@ module.exports = {
 		path: config.build,
 		clean: false,
 		assetModuleFilename: '[path][name][ext]',
-		publicPath: '/'
+		// Relative so the site works from any mount point (github.io subpath or a future custom domain root)
+		publicPath: './'
 	},
 	plugins: [
 		new CopyWebpackPlugin({
