@@ -1,6 +1,6 @@
 <%
 	const pageUrl = typeof canonical !== 'undefined' && canonical ? canonical : `https://${url}`
-	const socialImage = typeof preview_thumbnail !== 'undefined' && preview_thumbnail ? preview_thumbnail : 'https://adblock.turtlecute.org/assets/preview_toolz.png'
+	const socialImage = typeof preview_thumbnail !== 'undefined' && preview_thumbnail ? preview_thumbnail : 'https://orellius.github.io/wisp-adblock-test/assets/preview_toolz.png'
 %>
 <head>
     <meta charset="UTF-8">
@@ -14,15 +14,11 @@
 	<meta name="googlebot" content="index, follow">
 	<% } %>
 
-	<!-- Resource Hints -->
-	<link rel="preconnect" href="https://umami.priorato.org" crossorigin>
-
-	<!-- Analytics -->
-    <script defer src="https://umami.priorato.org/priorato.js" data-website-id="4eaed2d0-1d01-44b6-9381-d1f4a80a99fc"></script>
+	<!-- Wisp: no third-party analytics on an ad-blocking test page. -->
 	<link rel="icon" href="./assets/<%=page%>/icon.svg" type="image/svg+xml">
 	<% if (typeof canonical !== 'undefined' && canonical) { %><link rel="canonical" href="<%= canonical %>"><% } %>
     <title><%= title %></title>
-  	<meta name="author" content="Turtlecute">
+  	<meta name="author" content="Wisp">
 	<meta name="description" content="<%= description %>">
 
 	<% if (typeof noindex === 'undefined' || !noindex) { %>
@@ -40,7 +36,7 @@
 	<meta property="og:image:width" content="1200">
 	<meta property="og:image:height" content="630">
 	<meta property="og:image:alt" content="<%= title %> - Preview">
-	<meta property="og:site_name" content="AdBlockTest">
+	<meta property="og:site_name" content="Wisp AdBlock Test">
 	<meta property="og:locale" content="en_US">
 
 	<!-- Twitter Meta Tags -->
@@ -123,7 +119,7 @@
 				"name": "Why does the Cosmetic Filter test fail?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "If a cosmetic filter test fails, it means this specific website is not included in your adblock's rules or filter lists. This does not mean cosmetic filtering fails on all websites. You can add custom rules for adblock.turtlecute.org to fix this."
+					"text": "If a cosmetic filter test fails, it means this specific website is not included in your adblock's rules or filter lists. This does not mean cosmetic filtering fails on all websites. You can add custom rules for orellius.github.io to fix this."
 				}
 			}
 		]
