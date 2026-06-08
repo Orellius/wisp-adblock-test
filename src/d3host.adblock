@@ -7,8 +7,8 @@
 
 ! This list cover all the tests on https://orellius.github.io/wisp-adblock-test/
 ! Type : Stable
-! Entries : 127
-! Updated On: 6/6/2026
+! Entries : 121
+! Updated On: 8/6/2026
 ! Created by: Turtlecute, maintained by Wisp
 
 !============ Ads =============
@@ -62,8 +62,6 @@
 ! --- MouseFlow
 ||mouseflow.com^
 ||cdn.mouseflow.com^
-||o2.mouseflow.com^
-||gtm.mouseflow.com^
 ||api.mouseflow.com^
 ||tools.mouseflow.com^
 ||cdn-test.mouseflow.com^
@@ -150,11 +148,9 @@
 ||adtech.yahooinc.com^
 
 ! --- Yandex
-||extmaps-api.yandex.net^
 ||appmetrica.yandex.ru^
 ||adfstat.yandex.ru^
 ||metrika.yandex.ru^
-||offerwall.yandex.net^
 ||adfox.yandex.ru^
 
 ! --- Unity
@@ -196,13 +192,11 @@
 ||logbak.hicloud.com^
 
 ! --- OnePlus
-||click.oneplus.cn^
 ||open.oneplus.net^
 
 ! --- Samsung
 ||samsungads.com^
 ||smetrics.samsung.com^
-||nmetrics.samsung.com^
 ||samsung-com.112.2o7.net^
 ||analytics-api.samsunghealthcn.com^
 
