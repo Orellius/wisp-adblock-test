@@ -22,8 +22,10 @@ The page runs three families of checks against your browser, blocker extension, 
 | Check | How | What it measures |
 |---|---|---|
 | **Host blocking** (127 hosts) | `HEAD` probe to known ad/analytics/tracker/OEM hostnames | Domain-level blocking (DNS filters, hosts files, filter lists) |
-| **Cosmetic filter** (2) | Bait elements with ad-classnames, measured for hiding | Generic element-hiding capability |
-| **Ad script loading** (2) | Same-origin bait scripts named like ad SDKs | Path-pattern script blocking |
+| **Cosmetic filter** (7) | Bait elements carrying generic EasyList selectors (`###carbonads`, `##.ad-space`, …), static and injected, measured for hiding | Generic element-hiding, parse-time and DOM-observer |
+| **Ad & tracker requests** (13) | Same-origin bait scripts and images whose paths match **cited generic EasyList/EasyPrivacy rules** (`/pagead/conversion.js$script`, `/gtm.js`, `/pixel.gif?`, `/300x250.$image`, …) | Path-pattern blocking for scripts *and* images |
+
+Every request/cosmetic bait cites the live filter rule it matches and the list that ships it ([`src/data/baits.js`](src/data/baits.js), rules re-verified against the published lists on 2026-07-30). The two d3ward-heritage baits (`widget/ads.js`, `pagead.js`) are kept and labeled as strict-list baits — default lists don't match them, and the per-bait breakdown says so instead of letting them read as blocker failures.
 
 Results render as a liquid gauge plus a live tile per category. Click a tile for the per-host breakdown; results history, logs, and settings live in the footer.
 
@@ -37,8 +39,9 @@ A probe ends in one of **three** states, not two:
 
 Known limits, on purpose:
 
-- `HEAD /fakepage.html` exercises **domain-level** rules. Path-pattern filters (`*/pagead/*` and friends) won't match it; the two script checks cover that gap narrowly.
-- Cosmetic and script checks only fire if your blocker applies **generic** rules on unknown domains. Failing them doesn't mean those features are broken elsewhere (the FAQ on the page explains the rules to add).
+- `HEAD /fakepage.html` exercises **domain-level** rules. Path-pattern filters are covered separately by the 13 request baits, whose paths match cited generic rules from EasyList/EasyPrivacy.
+- Cosmetic and request checks only fire if your blocker applies **generic** rules on unknown domains. Failing them doesn't mean those features are broken elsewhere (the FAQ on the page explains the rules to add). Baits labeled *strict-list* in the breakdown are not expected to be caught by default lists.
+- Image-bait timeouts on our own origin score **unreachable**, not blocked — a wedged network is not your blocker's win.
 - A score is a snapshot of one network, one moment. Re-test before drawing conclusions.
 
 ## Keeping the bait list honest

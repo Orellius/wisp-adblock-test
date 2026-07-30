@@ -1,5 +1,6 @@
 import '../sass/index.sass'
 import data from '../data/adblock_data.json'
+import { REQUEST_BAITS, COSMETIC_BAITS } from '../data/baits'
 import packageJSON from '../../package.json'
 import { icons } from '../data/icons'
 import { navbar } from './components/navbar'
@@ -57,10 +58,10 @@ function normalizeResults(raw) {
 						: 0,
 					cosmetic_test: isPlainObject(entry.abt.cosmetic_test)
 						? entry.abt.cosmetic_test
-						: { static: null, dynamic: null },
+						: {},
 					script: isPlainObject(entry.abt.script)
 						? entry.abt.script
-						: { ads: null, pagead: null },
+						: {},
 					hosts: isPlainObject(entry.abt.hosts) ? entry.abt.hosts : {}
 				}
 			}
@@ -158,10 +159,14 @@ function resetTestState() {
 	abt.blocked = 0
 	abt.notblocked = 0
 	abt.unreachable = 0
-	abt.cosmetic_test.static = null
-	abt.cosmetic_test.dynamic = null
-	abt.script.ads = null
-	abt.script.pagead = null
+	abt.cosmetic_test = {}
+	COSMETIC_BAITS.forEach((b) => {
+		abt.cosmetic_test[b.id] = null
+	})
+	abt.script = {}
+	REQUEST_BAITS.forEach((b) => {
+		abt.script[b.id] = null
+	})
 	abt.hosts = {}
 }
 const test_log = document.getElementById('test_log')
@@ -212,14 +217,8 @@ let abt = {
 	blocked: 0,
 	notblocked: 0,
 	unreachable: 0,
-	cosmetic_test: {
-		static: null,
-		dynamic: null
-	},
-	script: {
-		ads: null,
-		pagead: null
-	},
+	cosmetic_test: {},
+	script: {},
 	hosts: {}
 }
 const testWrapper = document.getElementById('test')
@@ -246,7 +245,7 @@ const UNREACHABLE_ICON =
 const TILE_ICONS = {
 	'Cosmetic Filter':
 		"<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M0 0h24v24H0z' stroke='none'/><circle cx='12' cy='12' r='2'/><path d='M22 12c-2.667 4.667-6 7-10 7s-7.333-2.333-10-7c2.667-4.667 6-7 10-7s7.333 2.333 10 7'/></svg>",
-	'Ad Scripts':
+	'Ad Requests':
 		"<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M17 20h-11a3 3 0 0 1 0 -6h11a3 3 0 0 0 0 6h1a3 3 0 0 0 3 -3v-11a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v8'/></svg>"
 }
 
@@ -267,10 +266,18 @@ function tileEntries() {
 		return { key, kind: 'hosts', total }
 	})
 	if (settings['showCF'] === true) {
-		entries.push({ key: 'Cosmetic Filter', kind: 'cosmetic', total: 2 })
+		entries.push({
+			key: 'Cosmetic Filter',
+			kind: 'cosmetic',
+			total: COSMETIC_BAITS.length
+		})
 	}
 	if (settings['showSL'] === true) {
-		entries.push({ key: 'Ad Scripts', kind: 'script', total: 2 })
+		entries.push({
+			key: 'Ad Requests',
+			kind: 'script',
+			total: REQUEST_BAITS.length
+		})
 	}
 	return entries
 }
@@ -322,14 +329,15 @@ function tileProgress(entry) {
 			})
 		})
 	} else {
-		const pair =
+		const values =
 			entry.kind === 'cosmetic'
-				? [abt.cosmetic_test.static, abt.cosmetic_test.dynamic]
-				: [abt.script.ads, abt.script.pagead]
-		pair.forEach((result) => {
-			if (result !== null) {
+				? COSMETIC_BAITS.map((b) => abt.cosmetic_test[b.id])
+				: REQUEST_BAITS.map((b) => abt.script[b.id])
+		values.forEach((result) => {
+			if (result !== null && result !== undefined) {
 				done += 1
 				if (result === true) blocked += 1
+				else if (result === 'unreachable') unreachable += 1
 			}
 		})
 	}
@@ -421,15 +429,19 @@ function openCategoryDialog(entry) {
 			})
 		})
 	} else if (entry.kind === 'cosmetic') {
-		body.appendChild(hostRow('Static ad element', abt.cosmetic_test.static))
-		body.appendChild(
-			hostRow('Dynamic ad element', abt.cosmetic_test.dynamic)
-		)
+		COSMETIC_BAITS.forEach((b) => {
+			body.appendChild(
+				hostRow(b.label + ' — ' + b.rule, abt.cosmetic_test[b.id])
+			)
+		})
 		const explainer = document.querySelector('#cf_wrap details')
 		if (explainer) body.appendChild(explainer.cloneNode(true))
 	} else {
-		body.appendChild(hostRow('ads.js', abt.script.ads))
-		body.appendChild(hostRow('pagead.js', abt.script.pagead))
+		REQUEST_BAITS.forEach((b) => {
+			body.appendChild(
+				hostRow(b.label + ' — ' + b.rule, abt.script[b.id])
+			)
+		})
 		const explainer = document.querySelector('#sl_wrap details')
 		if (explainer) body.appendChild(explainer.cloneNode(true))
 	}
@@ -644,60 +656,68 @@ async function fetchTests() {
 	)
 }
 
-function ad_script_test() {
-	return new Promise((resolve) => {
-		const log = document.createElement('div')
-		const sfa1 = document.querySelector('#sfa_1')
-		const sfa2 = document.querySelector('#sfa_2')
+const IMAGE_BAIT_TIMEOUT_MS = 8000
 
-		abt.script.ads = typeof s_test_ads === 'undefined'
-		abt.script.pagead = typeof s_test_pagead === 'undefined'
-		sfa1.classList.add(abt.script.ads ? '_bg-green' : '_bg-red')
-		sfa2.classList.add(abt.script.pagead ? '_bg-green' : '_bg-red')
-		abt.blocked += (abt.script.ads ? 1 : 0) + (abt.script.pagead ? 1 : 0)
-		abt.notblocked += (abt.script.ads ? 0 : 1) + (abt.script.pagead ? 0 : 1)
-		test_log.appendChild(log)
-		log.innerHTML =
-			'<div>script_ads : ' +
-			abt.script.ads +
-			'</div><div>script_pagead : ' +
-			abt.script.pagead +
-			'</div><br> ------------------------- '
-		set_liquid()
-		resolve()
+// Same-origin image probe. A fresh Image() per run so re-tests re-request;
+// the cache-buster keeps `?` in the URL, which /pixel.gif? relies on.
+// error = blocked; load = not blocked; timeout on our own origin = the
+// network is wedged, not the blocker's win — scored unreachable.
+function probeImageBait(src) {
+	return new Promise((resolve) => {
+		const img = new Image()
+		const timer = setTimeout(() => resolve('unreachable'), IMAGE_BAIT_TIMEOUT_MS)
+		img.onload = () => {
+			clearTimeout(timer)
+			resolve(false)
+		}
+		img.onerror = () => {
+			clearTimeout(timer)
+			resolve(true)
+		}
+		img.src =
+			src + (src.indexOf('?') === -1 ? '?' : '&') + 'cb=' + Date.now()
 	})
+}
+
+function applyBaitResult(chipId, result) {
+	const chip = document.querySelector('#' + chipId)
+	if (!chip) return
+	chip.classList.remove('_bg-green', '_bg-red')
+	if (result === 'unreachable') return
+	chip.classList.add(result === true ? '_bg-green' : '_bg-red')
+}
+
+async function ad_script_test() {
+	const log = document.createElement('div')
+	const lines = []
+	for (const bait of REQUEST_BAITS) {
+		let result
+		if (bait.kind === 'script') {
+			result = typeof window[bait.global] === 'undefined'
+		} else {
+			result = await probeImageBait(bait.src)
+		}
+		abt.script[bait.id] = result
+		if (result === 'unreachable') abt.unreachable += 1
+		else if (result === true) abt.blocked += 1
+		else abt.notblocked += 1
+		applyBaitResult('sfa_' + bait.id, result)
+		lines.push('<div>request_' + bait.id + ' : ' + result + '</div>')
+		set_liquid()
+	}
+	test_log.appendChild(log)
+	log.innerHTML = lines.join('') + '<br> ------------------------- '
+	set_liquid()
 }
 const ctd = document.querySelector('#ctd_test')
+const COSMETIC_SETTLE_MS = 1200
 
-//Static — returns a promise so Promise.all can wait for it (#25)
-function cosmetic_test_static() {
+// A bait element counts as blocked when it measures collapsed. The static
+// baits sit in index.ejs so parse-time element hiding sees them; the dynamic
+// bait is injected here to exercise DOM-observer hiding. One settle delay
+// covers the whole battery.
+function cosmetic_test_run() {
 	return new Promise((resolve) => {
-		setTimeout(function () {
-			const cts = document.querySelector('#cts_test')
-			abt.cosmetic_test.static =
-				!cts || !(cts.clientHeight || cts.offsetHeight) ? true : false
-			abt.blocked += abt.cosmetic_test.static ? 1 : 0
-			abt.notblocked += abt.cosmetic_test.static ? 0 : 1
-			document
-				.querySelector('#ct_static')
-				.classList.add(
-					abt.cosmetic_test.static ? '_bg-green' : '_bg-red'
-				)
-			const log = document.createElement('div')
-			test_log.appendChild(log)
-			log.innerHTML =
-				' cosmetic_static_ad : ' +
-				abt.cosmetic_test.static +
-				'<br><br> ------------------------- '
-			set_liquid()
-			resolve()
-		}, 1200)
-	})
-}
-//Dynamic — returns a promise so Promise.all can wait for it (#25)
-function cosmetic_test_dynamic() {
-	return new Promise((resolve) => {
-		const log = document.createElement('div')
 		const existing = document.querySelector('#ad_ctd')
 		if (existing) existing.remove()
 		const ad = document.createElement('div')
@@ -707,24 +727,27 @@ function cosmetic_test_dynamic() {
 		ad.innerHTML = '&nbsp;'
 		ctd.appendChild(ad)
 		setTimeout(function () {
-			const adt = document.querySelector('#ad_ctd')
-			abt.cosmetic_test.dynamic =
-				!adt || !(adt.offsetHeight || adt.clientHeight) ? true : false
-			abt.blocked += abt.cosmetic_test.dynamic ? 1 : 0
-			abt.notblocked += abt.cosmetic_test.dynamic ? 0 : 1
-			test_log.appendChild(log)
-			log.innerHTML =
-				' cosmetic_dynamic_ad : ' +
-				abt.cosmetic_test.dynamic +
-				'<br><br> ------------------------- '
-			document
-				.querySelector('#ct_dynamic')
-				.classList.add(
-					abt.cosmetic_test.dynamic ? '_bg-green' : '_bg-red'
+			const log = document.createElement('div')
+			const lines = []
+			COSMETIC_BAITS.forEach((bait) => {
+				const target = document.getElementById(
+					bait.id === 'dynamic' ? 'ad_ctd' : bait.el
 				)
+				const blocked =
+					!target || !(target.offsetHeight || target.clientHeight)
+				abt.cosmetic_test[bait.id] = blocked
+				abt.blocked += blocked ? 1 : 0
+				abt.notblocked += blocked ? 0 : 1
+				applyBaitResult('ct_' + bait.id, blocked)
+				lines.push(
+					'<div>cosmetic_' + bait.id + ' : ' + blocked + '</div>'
+				)
+			})
+			test_log.appendChild(log)
+			log.innerHTML = lines.join('') + '<br> ------------------------- '
 			set_liquid()
 			resolve()
-		}, 1200)
+		}, COSMETIC_SETTLE_MS)
 	})
 }
 
@@ -744,10 +767,10 @@ async function startAdBlockTesting() {
 	// Pre-calculate total so percentage doesn't jump (#5)
 	abt.total = countTotalTests()
 	if (settings['showCF'] === true) {
-		abt.total += 2
+		abt.total += COSMETIC_BAITS.length
 	}
 	if (settings['showSL'] === true) {
-		abt.total += 2
+		abt.total += REQUEST_BAITS.length
 	}
 
 	// Make #adb_test visible for measurement (cosmetic tests need offsetHeight)
@@ -758,8 +781,7 @@ async function startAdBlockTesting() {
 	let tests = []
 	if (settings['showCF'] === true) {
 		showCategoryState('#cf_wrap', true)
-		tests.push(cosmetic_test_static())
-		tests.push(cosmetic_test_dynamic())
+		tests.push(cosmetic_test_run())
 	} else {
 		showCategoryState('#cf_wrap', false)
 	}

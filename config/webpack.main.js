@@ -51,7 +51,16 @@ module.exports = {
 				{
 					from: './js/widget/ads.js',
 					to: 'js/widget/ads.js'
-				}
+				},
+				// Path-pattern bait scripts (src/data/baits.js) — plain copies,
+				// never bundled: their URLs are the test.
+				{ from: './js/pagead/conversion.js', to: 'js/pagead/conversion.js' },
+				{ from: './js/prebid.js', to: 'js/prebid.js' },
+				{ from: './js/dist/adscript.js', to: 'js/dist/adscript.js' },
+				{ from: './js/analytics/analytics.js', to: 'js/analytics/analytics.js' },
+				{ from: './js/common/ga.js', to: 'js/common/ga.js' },
+				{ from: './js/gtm.js', to: 'js/gtm.js' },
+				{ from: './js/beacon.js', to: 'js/beacon.js' }
 			]
 		}),
 		new MiniCssExtractPlugin({
