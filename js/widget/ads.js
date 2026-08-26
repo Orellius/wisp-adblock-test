@@ -1,0 +1,1 @@
+window.s_test_ads=!0;
